@@ -1,25 +1,25 @@
-from cryptography.hazmat.primitives import cmac
-from cryptography.hazmat.primitives.ciphers import algorithms
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.keywrap import aes_key_wrap, aes_key_unwrap
 
-def generate_cmac(key, data):    
-    # Selecting the desired algorithm (e.g., AES-CMAC)
-    algorithm = algorithms.AES(key)
-    
-    # Creating the CMAC context
-    cmac_ctx = cmac.CMAC(algorithm) # Noncompliant {{(Mac) AES-CMAC}}
-    
-    # Updating the context with the data
-    cmac_ctx.update(data)
-    
-    # Finalizing the CMAC computation and getting the CMAC value
-    cmac_value = cmac_ctx.finalize()
-    
-    return cmac_value
+def aes_key_wrap_example():
+    # Generate a key to wrap
+    key_to_wrap = b'Sixteen byte key'
 
-# Example usage
+    # Generate wrapping key (must be 128, 192, or 256 bits long)
+    wrapping_key = b'ABCDEFGHIJKLMNOP'
+
+    # Wrap the key
+    wrapped_key = aes_key_wrap(wrapping_key, key_to_wrap, default_backend()) # Noncompliant {{(KeyWrap) AES128}}
+
+    print("Wrapped Key:", wrapped_key.hex())
+
+    # Unwrap the key
+    unwrapped_key = aes_key_unwrap(wrapping_key, wrapped_key, default_backend())
+
+    print("Unwrapped Key:", unwrapped_key.hex())
+
+    # Ensure that the unwrapped key matches the original key
+    assert unwrapped_key == key_to_wrap
+
 if __name__ == "__main__":
-    key = b'Sixteen byte key'  # 16-byte key for AES
-    data = b'This is some data'  # Data to generate CMAC for
-    
-    cmac_value = generate_cmac(key, data)
-    print("Generated CMAC:", cmac_value.hex())
+    aes_key_wrap_example()
