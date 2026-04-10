@@ -1,19 +1,15 @@
-from cryptography.hazmat.primitives.asymmetric import rsa
+import os
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives.asymmetric import utils
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
-private_key = rsa.generate_private_key( # Noncompliant {{(PrivateKey) RSA}}
-    public_exponent=65537,
-    key_size=2048,
+salt = os.urandom(16)
+info = b"hkdf-example"
+
+hkdf = HKDF( # Noncompliant {{(KeyDerivationFunction) HKDF-SHA256}}
+    algorithm=hashes.SHA256(),
+    length=32,
+    salt=salt,
+    info=info,
 )
 
-message = b"A message I want to sign"
-signature = private_key.sign(
-    message,
-    padding.PSS(
-        mgf=padding.MGF1(hashes.SHA256()),
-        salt_length=padding.PSS.MAX_LENGTH
-    ),
-    utils.Prehashed(hashes.SHA384())
-)
+key = hkdf.derive(b"input key")
