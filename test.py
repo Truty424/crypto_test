@@ -3,7 +3,7 @@ import java.security.NoSuchAlgorithmException;
 
 static byte[] createDigest(byte[] input) {
     try {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
         return messageDigest.digest(input);
     } catch (NoSuchAlgorithmException e) {
         throw new RuntimeException(
