@@ -1,11 +1,12 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-static MessageDigest createMessageDigest() {
+static byte[] createDigest(byte[] input) {
     try {
-        return MessageDigest.getInstance("SHA-1");
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+        return messageDigest.digest(input);
     } catch (NoSuchAlgorithmException e) {
         throw new RuntimeException(
-                "Cannot instantiate the message digest algorithm " + "SHA-1", e);
+                "Cannot instantiate the message digest algorithm SHA-1", e);
     }
 }
