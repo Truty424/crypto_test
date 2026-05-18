@@ -10,3 +10,16 @@ static byte[] createDigest(byte[] input) {
                 "Cannot instantiate the message digest algorithm SHA-1", e);
     }
 }
+
+private String generateUniqueFileKey(String prefix, String hashString) {
+            MessageDigest messageDigest;
+            try {
+                messageDigest = MessageDigest.getInstance("SHA-1");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+            messageDigest.update(hashString.getBytes(StandardCharsets.UTF_8));
+
+            return String.format(
+                    "%s_%s", prefix, StringUtils.byteToHexString(messageDigest.digest()));
+        }
